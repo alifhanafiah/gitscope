@@ -1,0 +1,27 @@
+.wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 600px;
+  max-width: 85%;
+}
+
+.bar {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: border-color 0.2s ease-in-out;
+}
+
+.bar:focus {
+  border-color: var(--accent-color);
+  outline: none;
+}
+
+.label {
+  width: 100%;
+}
