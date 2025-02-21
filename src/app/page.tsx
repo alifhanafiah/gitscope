@@ -1,3 +1,4 @@
+import RepoList from '@/components/RepoList';
 import SearchBar from '@/components/SearchBar';
 import Title from '@/components/Title';
 import styles from '@/styles/page.module.css';
@@ -10,6 +11,8 @@ export default function Home() {
       </div>
 
       <SearchBar />
+
+      <RepoList />
     </div>
   );
 }

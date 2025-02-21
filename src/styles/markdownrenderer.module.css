@@ -1,0 +1,51 @@
+.markdown {
+  font-family: var(--font-primary);
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+/* Headings */
+.markdown h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--accent-color);
+}
+.markdown h2 {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  color: var(--accent-color);
+}
+.markdown h3 {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+  color: var(--accent-color);
+}
+
+/* Paragraphs */
+.markdown p {
+  margin-bottom: 1rem;
+}
+
+/* Code blocks */
+.markdown pre {
+  background-color: #f6f8fa;
+  padding: 1rem;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+}
+
+/* Inline code */
+.markdown code {
+  background-color: #f6f8fa;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+}
+
+/* Lists */
+.markdown ul,
+.markdown ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}

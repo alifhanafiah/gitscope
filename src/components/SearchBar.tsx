@@ -1,38 +1,41 @@
 'use client';
 
+import { useRepoContext } from '@/contexts/userRepoContext';
+import { fetchUserRepos } from '@/lib/actions';
 import styles from '@/styles/searchbar.module.css';
-import { useState } from 'react';
+import { useRef } from 'react';
 
-interface SearchBarProps {
-  placeholder?: string;
-  onSearch?: (query: string) => void;
-}
-
-export default function SearchBar({
-  placeholder = 'Who are you searching for?',
-  onSearch,
-}: SearchBarProps) {
-  const [query, setQuery] = useState('');
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value);
-    if (onSearch) onSearch(event.target.value);
-  };
+export default function SearchBar() {
+  const ref = useRef<HTMLFormElement>(null);
+  const { setRepos } = useRepoContext();
 
   return (
-    <div className={styles.wrapper}>
+    <form
+      ref={ref}
+      action={async (formData: FormData) => {
+        const result = await fetchUserRepos(formData);
+
+        if (result?.error) {
+          alert('Error: ' + result.message);
+          return;
+        }
+
+        setRepos(result.repos);
+        ref.current?.reset();
+      }}
+      className={styles.wrapper}
+    >
       <label htmlFor="search-input" className={styles.label}>
         <input
           id="search-input"
+          name="username"
           className={styles.bar}
           type="text"
-          value={query}
-          onChange={handleChange}
-          placeholder={placeholder}
+          placeholder="Who are you searching for?"
           title="Search"
           aria-label="Search"
         />
       </label>
-    </div>
+    </form>
   );
 }

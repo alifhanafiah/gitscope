@@ -1,3 +1,4 @@
+import { Providers } from '@/contexts';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Geist_Mono, Inter } from 'next/font/google';
@@ -35,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${geistMono.variable}`}>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

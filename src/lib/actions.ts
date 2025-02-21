@@ -1,5 +1,3 @@
-'use server';
-
 import { z } from 'zod';
 
 // Schema for fetching a user's repositories.
@@ -8,7 +6,7 @@ const fetchUserReposSchema = z.object({
 });
 
 export async function fetchUserRepos(formData: FormData) {
-  // Validate form data by extracting the "username" field.
+  // Validate form data
   const validatedFields = fetchUserReposSchema.safeParse({
     username: formData.get('username'),
   });
@@ -22,15 +20,27 @@ export async function fetchUserRepos(formData: FormData) {
 
   const { username } = validatedFields.data;
 
-  // Call GitHub's API to get the user's repositories.
+  // Fetch the user's repos from GitHub
   const response = await fetch(
     `https://api.github.com/users/${username}/repos`
   );
+
+  // Handle specific 404 response (user not found)
+  if (response.status === 404) {
+    return { error: true, message: 'User not found' };
+  }
+
   if (!response.ok) {
     return { error: true, message: 'Error fetching repositories from GitHub' };
   }
 
   const repos = await response.json();
+
+  // Handle case where no repositories are found
+  if (Array.isArray(repos) && repos.length === 0) {
+    return { error: true, message: 'No repositories found for that username.' };
+  }
+
   return { error: false, repos };
 }
 
@@ -40,13 +50,15 @@ const fetchRepoReadmeSchema = z.object({
   repoName: z.string().min(1, { message: 'Repository name is required.' }),
 });
 
-export async function fetchRepoReadme(formData: FormData) {
-  // Validate form data by extracting both "username" and "repoName".
+export async function fetchRepoReadmeByParams(
+  username: string,
+  repoName: string
+) {
+  // Validate the input parameters.
   const validatedFields = fetchRepoReadmeSchema.safeParse({
-    username: formData.get('username'),
-    repoName: formData.get('repoName'),
+    username,
+    repoName,
   });
-
   if (!validatedFields.success) {
     return {
       error: true,
@@ -54,12 +66,22 @@ export async function fetchRepoReadme(formData: FormData) {
     };
   }
 
-  const { username, repoName } = validatedFields.data;
+  const { username: validUsername, repoName: validRepoName } =
+    validatedFields.data;
 
-  // Call GitHub's API to get the repository's README.
+  // Fetch the repository's README from GitHub.
   const response = await fetch(
-    `https://api.github.com/repos/${username}/${repoName}/readme`
+    `https://api.github.com/repos/${validUsername}/${validRepoName}/readme`
   );
+
+  // Handle a 404 (Not Found) response.
+  if (response.status === 404) {
+    return {
+      error: true,
+      message: 'Repository not found or no README available',
+    };
+  }
+
   if (!response.ok) {
     return {
       error: true,
@@ -68,6 +90,13 @@ export async function fetchRepoReadme(formData: FormData) {
   }
 
   const json = await response.json();
+
+  if (!json.content) {
+    return {
+      error: true,
+      message: 'No README content found for this repository.',
+    };
+  }
 
   // Decode the base64 encoded README content.
   const decodedContent = Buffer.from(json.content, 'base64').toString('utf-8');
